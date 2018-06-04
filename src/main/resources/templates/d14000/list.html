@@ -1,0 +1,66 @@
+<!DOCTYPE html>
+<html lang="ja" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>一覧表示</title>
+</head>
+<body>
+<h1>一覧表示</h1>
+
+<table>
+    <thead>
+    <tr>
+        <td>番号</td><td>名前</td><td>身長</td><td>体重</td><td>BMI</td><td>BMIクラス</td>
+    </tr>
+    </thead>
+
+    <!--th:eachはいわゆる拡張for文だからリストの中身の数だけこのブロックの中を繰り返す-->
+    <tbody>
+    <tr th:each="carte,iterStat:${carteList}">
+        <!--iterStatは中に色んな情報を抱えているがとりあえず使うのは番号のindex-->
+        <td th:text="${iterStat.index}"></td>
+        <td th:text="${carte.name}"></td>
+        <td th:text="${carte.height}"></td>
+        <td th:text="${carte.weight}"></td>
+        <td th:text="${carte.bmi}"></td>
+        <td th:text="${carte.bmiClass}"></td>
+        <td th:if="${carte.name != '平均'}">
+            <!--GetメソッドならURLに直書きできるのでformを使う必要なし-->
+            <a th:href="'/d14000/remove/?num='+${iterStat.index}">削除</a>
+        </td>
+    </tr>
+    </tbody>
+</table>
+
+<h1>肥満晒し上げ</h1>
+
+<ul>
+    <!--th:ifを用いてThymeleaf側で検索的なことをすることができる-->
+    <li th:each="carte:${carteList}" th:if="${carte.isFat()}" th:text="${carte.name}"></li>
+</ul>
+
+<h1>計算</h1>
+
+<form method="post" action="/d14000/search/">
+    <p>
+        <input type="submit" value="計算" name="submit"><br>
+        番号：<input type="number" name="number" placeholder="0"><br>
+        理想BMI[kg]：<input type="number" step="0.01" name="bmi" placeholder="22.0"><br>
+        運動強度(METs)：<input type="number" step="0.1" name="mets" placeholder="3.0"><br>
+        運動時間[h]：<input type="number" step="0.05" name="time" placeholder="1.0"><br>
+    </p>
+</form>
+
+<h1>追加</h1>
+
+<form method="post" action="/d14000/add/">
+    <p>
+        <input type="submit" value="書き込む" name="submit"><br>
+        名前：<input type="text" name="name"><br>
+        身長：<input type="number" step="0.01" name="height"><br>
+        体重：<input type="number" step="0.01" name="weight"><br>
+    </p>
+</form>
+
+</body>
+</html>
